@@ -39,10 +39,20 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import swipelotto.composeapp.generated.resources.Res
 import swipelotto.composeapp.generated.resources.compose_multiplatform
 import kotlin.math.roundToInt
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.example.swipelotto.logic.ScoreCal
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
+import kotlin.random.Random
 
 @Composable
 @Preview
 fun App() {
+
     MaterialTheme {
 
         Box(
@@ -54,76 +64,134 @@ fun App() {
 //            contentAlignment = TODO(),
 //            propagateMinConstraints = TODO(),
         ) {
-            LottoNumberCompose()
-//            DraggableTextLowLevel()
+            val number = Random.nextInt(1000000).toString().padStart(6, '0').toCharArray();
+            println(number)
+
+            //
+            val digitRevealingScore = rememberSaveable() {
+                mutableStateListOf<NumberWithScore>(
+                    NumberWithScore(number[0], 1),
+                    NumberWithScore(number[1], 1),
+                    NumberWithScore(number[2], 1),
+                    NumberWithScore(number[3], 1),
+                    NumberWithScore(number[4], 1),
+                    NumberWithScore(number[5], 1),
+                )
+            }
+
+            val digitTotalScore = remember {
+                mutableStateListOf<Double>(
+                    0.0,0.0,0.0,0.0,0.0,0.0
+                )
+            }
+
+
+
+
+
+
+
+            LottoNumberCompose(
+                digitRevealingScore
+            )
+            DraggableTextLowLevel(
+                onDrag = {
+                    x, y ->
+                    val absX=  abs(x)
+                    val absY = abs(y)
+//                    println("${absX}, ${absY}, mean: ${(absX + absY) / 2}, vector: ${sqrt(x.pow(2) + y.pow(2))}")
+                    val rand = Random.nextInt(6)
+                    digitTotalScore[rand] += (absX + absY) / 2
+
+                    val alpha = ScoreCal().exponentialMap(digitTotalScore[0])
+                    println("score: ${digitTotalScore[rand]} alpha:  $alpha")
+                    val newData = setAlpha(
+                        digitRevealingScore[rand], alpha
+                    )
+                    digitRevealingScore[rand] = newData;
+                }
+            )
+            Column(modifier = Modifier.align(Alignment.BottomCenter))
+                {
+                    Text("*For Entertainment purpose only.")
+                }
+
         }
     }
+}
+
+private fun setAlpha(numberWithScore: NumberWithScore, addScore: Int): NumberWithScore{
+    var alpha = addScore
+    if(addScore >= 255){
+       return  NumberWithScore(digit = numberWithScore.digit, alpha = 255)
+    }
+    return NumberWithScore(digit = numberWithScore.digit, alpha = alpha)
 }
 
 @Composable
 private fun LottoNumberCompose(
-
-){
-    var lottoNumber = 123456.toString();
-
-    // make data class
-    val lottoNumberWithAlpha = lottoNumber.toCharArray().map {
-        it  ->
-        NumberWithScore(digit = it, alpha = 255)
-    }
-Box(modifier = Modifier.fillMaxSize()
-
-    .wrapContentSize(Alignment.Center, true
-    )
-
-
+    lottoNumberWithAlpha: SnapshotStateList<NumberWithScore>,
 )
 {
-    Text(buildAnnotatedString {
-        lottoNumberWithAlpha.forEach { value ->
-            withStyle(
-                style = SpanStyle(
-                    color = Color(0, 0, 0, value.alpha),
-                    fontSize = 80.sp,
-                    fontFamily = FontFamily.Monospace,
 
-                )
+    // make data class
+    Box(
+        modifier = Modifier.fillMaxSize()
 
-            ) {
-                append(value.digit)
-
-            }
-        }
-
-    },
-        overflow = TextOverflow.StartEllipsis,
-        textAlign = TextAlign.Center, maxLines = 1)
+            .wrapContentSize(
+                Alignment.Center, true
+            )
 
 
-}
+    )
+    {
+        Text(
+            buildAnnotatedString {
+                lottoNumberWithAlpha.forEach { value ->
+                    withStyle(
+                        style = SpanStyle(
+                            color = Color(0, 0, 0, value.alpha),
+                            fontSize = 80.sp,
+                            fontFamily = FontFamily.Monospace,
+
+                            )
+
+                    ) {
+                        append(value.digit)
+
+                    }
+                }
+
+            },
+            overflow = TextOverflow.StartEllipsis,
+            textAlign = TextAlign.Center, maxLines = 1
+        )
+
+
+    }
 
 }
 
 @Composable
-private fun DraggableTextLowLevel() {
+private fun DraggableTextLowLevel(
+    onDrag: (x:Float, y: Float) -> Unit
+) {
     var offsetX by remember { mutableFloatStateOf(0f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
-    Box(modifier = Modifier.fillMaxSize()
-        .pointerInput(
-            Unit
-        ){
-            detectTapGestures (
-                onTap = {
-                    offset ->
-                    offsetX = offset.x
-                    offsetY = offset.y
-                }
-            )
+    Box(
+        modifier = Modifier.fillMaxSize()
+            .pointerInput(
+                Unit
+            ) {
+                detectTapGestures(
+                    onTap = { offset ->
+                        offsetX = offset.x
+                        offsetY = offset.y
+                    }
+                )
 
-        }
+            }
     ) {
-
-
         Box(
             Modifier
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
@@ -133,7 +201,8 @@ private fun DraggableTextLowLevel() {
 
                     detectDragGestures { change, dragAmount ->
                         change.consume()
-                        println(dragAmount.x)
+
+                        onDrag(dragAmount.x, dragAmount.y)
                         offsetX += dragAmount.x
                         offsetY += dragAmount.y
                     }
