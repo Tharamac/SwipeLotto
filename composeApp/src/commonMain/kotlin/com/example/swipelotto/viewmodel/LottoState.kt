@@ -1,0 +1,10 @@
+package com.example.swipelotto.viewmodel
+
+import com.example.swipelotto.dataclass.NumberWithScore
+
+data class LottoState (
+    val lottoNumber:  String = "123456",
+    val digitsWithScore: List<Int> = List<Int>(6, {0}) ,
+) {
+
+}

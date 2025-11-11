@@ -1,4 +1,4 @@
-package com.example.swipelotto.logic
+package com.example.swipelotto.util
 import kotlin.math.exp
 import kotlin.math.roundToInt
 
