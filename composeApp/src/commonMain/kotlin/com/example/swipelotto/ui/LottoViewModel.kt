@@ -1,10 +1,9 @@
-package com.example.swipelotto.viewmodel
+package com.example.swipelotto.ui
 
 import androidx.lifecycle.ViewModel
 import com.example.swipelotto.dataclass.NumberWithScore
 import com.example.swipelotto.util.ScoreCal
-
-
+import com.example.swipelotto.ui.LottoState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,9 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlin.Double
 import kotlin.collections.MutableList
 import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.sqrt
 import kotlin.random.Random
-
-// Game UI state
 
 class LottoViewModel: ViewModel() {
 //    private lateinit var randomLottoNumber: CharArray
@@ -27,20 +26,20 @@ class LottoViewModel: ViewModel() {
 
     init {
         reset()
-        digitsSwipeScore = MutableList<Double>(6, {0.0})
     }
     fun reset(){
         _uiState.value = LottoState(
             lottoNumber = randomLotto()
         )
+        digitsSwipeScore = MutableList<Double>(6, {0.0})
     }
     private fun randomLotto(): String{
-        return Random.nextInt(1000000).toString().padStart(6, '0')
+        return Random.Default.nextInt(1000000).toString().padStart(6, '0')
     }
 
-    private fun setAlpha(numberWithScore: NumberWithScore, addScore: Int): NumberWithScore{
+    private fun setAlpha(numberWithScore: NumberWithScore, addScore: Int): NumberWithScore {
         if(addScore >= 255){
-            return  NumberWithScore(digit = numberWithScore.digit, alpha = 255)
+            return NumberWithScore(digit = numberWithScore.digit, alpha = 255)
         }
         return NumberWithScore(digit = numberWithScore.digit, alpha = addScore)
     }
@@ -50,8 +49,8 @@ class LottoViewModel: ViewModel() {
             val absY = abs(y)
 
 //           println("${absX}, ${absY}, mean: ${(absX + absY) / 2}, vector: ${sqrt(x.pow(2) + y.pow(2))}")
-            val rand = Random.nextInt(6)
-            digitsSwipeScore[rand]  += (absX + absY) / 2
+            val rand = Random.Default.nextInt(6)
+            digitsSwipeScore[rand]  += sqrt(x.pow(2) + y.pow(2))
             val alpha = ScoreCal().exponentialMap( digitsSwipeScore[rand])
             val newList = uiState.value.digitsWithScore.toMutableList()
 
@@ -61,11 +60,10 @@ class LottoViewModel: ViewModel() {
                 newList[rand] = alpha
             }
 
-            _uiState.update{
+            _uiState.update {
                 state -> state.copy(
                     digitsWithScore = newList.toList()
                 )
             }
     }
 }
-

@@ -1,6 +1,4 @@
-package com.example.swipelotto.viewmodel
-
-import com.example.swipelotto.dataclass.NumberWithScore
+package com.example.swipelotto.ui
 
 data class LottoState (
     val lottoNumber:  String = "123456",
