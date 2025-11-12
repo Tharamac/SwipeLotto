@@ -79,8 +79,8 @@ fun MainScreen(
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
-    ModalNavigationDrawer(
 
+    ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,
         drawerContent = {
@@ -108,7 +108,6 @@ fun MainScreen(
                     }
                 )
                 HorizontalDivider()
-
                 Column(
                     modifier = Modifier.padding(16.dp)
                 )
@@ -119,12 +118,9 @@ fun MainScreen(
                     Text("- Use in BangkokBeasts 2025", modifier = Modifier.padding(bottom = 8.dp))
                     Text("- For Entertainment purpose only. แต่ถ้าถูกหวยก็บอกกันด้วย", modifier = Modifier.padding(bottom = 8.dp))
                 }
-
-                // ...other drawer items
             }
         }
     ) {
-
         Box(
             modifier = Modifier
                 .paint(
@@ -134,24 +130,6 @@ fun MainScreen(
                 .safeContentPadding()
                 .fillMaxSize(),
         ) {
-//           Column(modifier = Modifier.align(Alignment.TopStart)){
-//                Button(
-//                    onClick = {
-//                        scope.launch {
-//                            drawerState.apply {
-//                                if (isClosed) open() else close()
-//                            }
-//                        }
-//
-//                    }
-//                ) {
-//                    Icon(
-//                        Icons.Default.Home,
-//                        contentDescription = "",
-//                        tint = Color.White,
-//                        )
-//                }
-//            }
             LottoNumberCompose(
                 lottoUIState.lottoNumber.toCharArray(),
                 lottoUIState.digitsWithScore
@@ -162,21 +140,8 @@ fun MainScreen(
                     lottoViewModel.onDrag(x, y)
                 }
             )
-
-//            Column(modifier = Modifier.align(Alignment.BottomCenter))
-//            {
-//
-//                Text("*For Entertainment purpose only.")
-//                Text("แต่ถ้าถูกหวยก็บอกกันด้วย")
-//            }
-
         }
     }
-
-
-
-//    val painter: Painter = painterResource()
-
 }
 
 
@@ -186,7 +151,6 @@ private fun LottoNumberCompose(
     lottoNumberWithAlpha: List<Int>,
 )
 {
-    println(lottoNumberWithAlpha)
     Box(
         modifier = Modifier.fillMaxSize()
             .wrapContentSize(
