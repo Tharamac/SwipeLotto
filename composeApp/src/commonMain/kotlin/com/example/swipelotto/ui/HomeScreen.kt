@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.NavigationDrawerItemColors
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -51,6 +52,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -82,12 +84,12 @@ fun MainScreen(
         gesturesEnabled = true,
         drawerContent = {
             ModalDrawerSheet(
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(250.dp),
             ) {
-
                 NavigationDrawerItem(
                     label = { Text(text = "Reset") },
-                    selected = false,
+                    selected = true,
+
                     onClick = {
                         lottoViewModel.reset()
                         scope.launch {
@@ -105,13 +107,17 @@ fun MainScreen(
                     }
                 )
                 HorizontalDivider()
-                Text("About", modifier = Modifier.padding(16.dp))
-                HorizontalDivider()
+
                 Column(
-                    modifier = Modifier.align ( alignment= Alignment.End ).padding(16.dp)
+                    modifier = Modifier.padding(16.dp)
                 )
-                {  Text("*For Entertainment purpose only.")
-                    Text("แต่ถ้าถูกหวยก็บอกกันด้วย") }
+                {  Text("About แอพขูดหวย", fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.padding(bottom = 16.dp))
+                    Text("- จัดทำโดย Tomoh", modifier = Modifier.padding(bottom = 8.dp))
+                    Text("- เครื่องมือ Kotlin Multiplatform", modifier = Modifier.padding(bottom = 8.dp))
+                    Text("- Use in BangkokBeasts 2025", modifier = Modifier.padding(bottom = 8.dp))
+                    Text("- For Entertainment purpose only. แต่ถ้าถูกหวยก็บอกกันด้วย", modifier = Modifier.padding(bottom = 8.dp))
+                }
 
                 // ...other drawer items
             }
@@ -127,24 +133,24 @@ fun MainScreen(
                 .safeContentPadding()
                 .fillMaxSize(),
         ) {
-            Column(modifier = Modifier.align(Alignment.TopStart)){
-                Button(
-                    onClick = {
-                        scope.launch {
-                            drawerState.apply {
-                                if (isClosed) open() else close()
-                            }
-                        }
-
-                    }
-                ) {
-                    Icon(
-                        Icons.Default.Home,
-                        contentDescription = "",
-                        tint = Color.White,
-                        )
-                }
-            }
+//           Column(modifier = Modifier.align(Alignment.TopStart)){
+//                Button(
+//                    onClick = {
+//                        scope.launch {
+//                            drawerState.apply {
+//                                if (isClosed) open() else close()
+//                            }
+//                        }
+//
+//                    }
+//                ) {
+//                    Icon(
+//                        Icons.Default.Home,
+//                        contentDescription = "",
+//                        tint = Color.White,
+//                        )
+//                }
+//            }
             LottoNumberCompose(
                 lottoUIState.lottoNumber.toCharArray(),
                 lottoUIState.digitsWithScore
@@ -156,12 +162,12 @@ fun MainScreen(
                 }
             )
 
-            Column(modifier = Modifier.align(Alignment.BottomCenter))
-            {
-
-                Text("*For Entertainment purpose only.")
-                Text("แต่ถ้าถูกหวยก็บอกกันด้วย")
-            }
+//            Column(modifier = Modifier.align(Alignment.BottomCenter))
+//            {
+//
+//                Text("*For Entertainment purpose only.")
+//                Text("แต่ถ้าถูกหวยก็บอกกันด้วย")
+//            }
 
         }
     }
@@ -194,7 +200,7 @@ private fun LottoNumberCompose(
                     withStyle(
                         style = SpanStyle(
                             color = Color(0, 0, 0, value),
-                            fontSize = 80.sp,
+                            fontSize = 90.sp,
                             fontFamily = FontFamily.Monospace,
                         )
                     ) {
@@ -233,7 +239,7 @@ private fun DraggableTextLowLevel(
             modifier = Modifier
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
 
-                .size(150.dp)
+                .size(200.dp)
                 .pointerInput(Unit) {
 
                     detectDragGestures { change, dragAmount ->
