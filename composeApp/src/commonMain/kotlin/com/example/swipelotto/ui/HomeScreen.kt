@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
@@ -200,7 +201,7 @@ private fun LottoNumberCompose(
                     withStyle(
                         style = SpanStyle(
                             color = Color(0, 0, 0, value),
-                            fontSize = 90.sp,
+                            fontSize = 100.sp,
                             fontFamily = FontFamily.Monospace,
                         )
                     ) {
@@ -220,6 +221,8 @@ private fun DraggableTextLowLevel(
 ) {
     var offsetX by remember { mutableFloatStateOf(150f) }
     var offsetY by remember { mutableFloatStateOf(0f) }
+    val pawSize = 250.dp
+    val boxSizePx = with(LocalDensity.current) { pawSize.toPx() }
     Box(
         modifier = Modifier.fillMaxSize()
             .pointerInput(
@@ -227,8 +230,8 @@ private fun DraggableTextLowLevel(
             ) {
                 detectTapGestures(
                     onTap = { offset ->
-                        offsetX = offset.x
-                        offsetY = offset.y
+                        offsetX = offset.x - boxSizePx /2
+                        offsetY = offset.y - boxSizePx/2
                     }
                 )
 
@@ -238,8 +241,8 @@ private fun DraggableTextLowLevel(
             painter = painterResource(Res.drawable.paw),
             modifier = Modifier
                 .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
-
-                .size(200.dp)
+//                .background(Color.Blue)
+                .size(pawSize)
                 .pointerInput(Unit) {
 
                     detectDragGestures { change, dragAmount ->
